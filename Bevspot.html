@@ -1,0 +1,743 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BevSpot Proposal Generator</title>
+
+    <style>
+        /* ... all your styles ... */
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: #f8f9fa;
+            margin: 0;
+            padding: 24px;
+        }
+
+        .app-container {
+            background-color: #ffffff;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            max-width: 800px;
+            margin: auto;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        }
+
+        .app-header {
+            text-align: center;
+            margin: 20px 20px 0 20px;
+            padding-bottom: 16px;
+            border-bottom: 2px solid #f26b3a;
+        }
+
+        .app-header h1 {
+            color: #333;
+            margin: 0;
+        }
+
+        .app-section {
+            background-color: #ffffff;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 24px;
+            margin: 20px;
+        }
+
+        .app-section h2 {
+            color: #f26b3a;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 8px;
+            margin-top: 0;
+        }
+
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 6px;
+            color: #555;
+        }
+
+        .form-group input[type="text"],
+        .form-group input[type="email"],
+        .form-group input[type="tel"],
+        .form-group input[type="date"],
+        .form-group input[type="number"],
+        .form-group select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box; /* Important for 100% width */
+            font-size: 1rem;
+        }
+        
+        .header-logos {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+
+        .logo-upload {
+            width: 180px;
+            height: 60px;
+            border: 2px dashed #ccc;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            color: #888;
+            font-size: 14px;
+            border-radius: 4px;
+            position: relative;
+            cursor: pointer;
+        }
+        
+        .logo-upload input[type="file"] {
+            display: none;
+        }
+
+        .logo-upload:hover {
+            border-color: #f26b3a;
+            color: #f26b3a;
+        }
+        
+        .bevspot-logo img {
+            width: 180px;
+            height: auto;
+        }
+
+        .tos-preview {
+            background-color: #f9f9f9;
+            border: 1px solid #eee;
+            border-radius: 4px;
+            padding: 16px;
+            min-height: 150px;
+            font-size: 14px;
+            color: #444;
+            overflow-y: auto;
+        }
+        
+        .tos-preview ul {
+            padding-left: 20px;
+        }
+        
+        .tos-preview li {
+            margin-bottom: 8px;
+        }
+        
+        .tos-preview a {
+            color: #0056b3;
+            text-decoration: underline;
+        }
+        
+        /* Simple checkbox style */
+        .simple-checkbox-group {
+            display: flex;
+            align-items: center;
+            padding: 8px 0;
+        }
+        .simple-checkbox-group input[type="checkbox"] {
+            margin-right: 10px;
+        }
+        .simple-checkbox-group label {
+            margin: 0;
+            font-weight: 600;
+        }
+
+        .generate-button {
+            background-color: #f26b3a;
+            color: white;
+            font-size: 18px;
+            font-weight: 600;
+            padding: 14px 28px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            width: 100%;
+            text-align: center;
+        }
+
+        .generate-button:hover {
+            background-color: #d95f33;
+        }
+        
+        /* Styles for new dynamic sections */
+        .hidden {
+            display: none;
+        }
+        
+        #multi-location-section, #promo-section {
+            border-top: 1px solid #eee;
+            margin-top: 20px;
+            padding-top: 20px;
+            padding-left: 15px;
+            border-left: 3px solid #f26b3a;
+        }
+        
+        #location-inputs-container .form-group {
+            padding-left: 0;
+            border-left: none;
+            margin-top: 0;
+            padding-top: 0;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="app-container">
+        
+        <div class="app-header">
+            <h1>BevSpot Proposal Generator</h1>
+        </div>
+
+        <div class="app-section">
+            <h2>Part 1: Proposal Header</h2>
+            <div class="header-logos">
+                <label for="client-logo-upload" class="logo-upload">
+                    <strong>+ Upload Client Logo</strong>
+                    <span style="font-size: 12px;">(.png, .jpg)</span>
+                </label>
+                <input type="file" id="client-logo-upload" accept="image/png, image/jpeg">
+                
+                <div class="bevspot-logo">
+                    <img id="bevspot-logo-img" 
+                         src="data:image/png;base64,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" 
+                         alt="BevSpot Logo">
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="location-name">Location Name (Primary)</label>
+                <input type="text" id="location-name" placeholder="e.g., The Grand Oak Tavern">
+            </div>
+            <div class="form-group">
+                <label for="proposal-date">Date</label>
+                <input type="date" id="proposal-date">
+            </div>
+            
+            <div class="simple-checkbox-group">
+                <input type="checkbox" id="is-revised">
+                <label for="is-revised">Revised Proposal</label>
+            </div>
+        </div>
+
+        <div class="app-section">
+            <h2>Part 2: Client Details</h2>
+            <div class="form-group">
+                <label for="client-name">Client Name</label>
+                <input type="text" id="client-name" placeholder="e.g., Jane Smith">
+            </div>
+            <div class="form-group">
+                <label for="client-email">Client Email</label>
+                <input type="email" id="client-email" placeholder="e.g., jane@grandoak.com">
+            </div>
+            <div class="form-group">
+                <label for="client-phone">Contact Number</label>
+                <input type="tel" id="client-phone" placeholder="e.g., (555) 123-4567">
+            </div>
+        </div>
+
+        <div class="app-section">
+            <h2>Part 3: Agreement Details</h2>
+            <div class="form-group">
+                <label for="package-type">Package Type</label>
+                <select id="package-type">
+                    <option value="">-- Select a Package --</option>
+                    <option value="Beverage Pro">Beverage Pro</option>
+                    <option value="Food Pro">Food Pro</option>
+                    <option value="Food and Beverage Pro">Food and Beverage Pro</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label for="list-price">List Price ($)</label>
+                <input type="number" id="list-price" value="0">
+            </div>
+            
+            <div class="form-group">
+                <label for="agreement-value">Your Price ($)</label>
+                <input type="number" id="agreement-value" placeholder="e.g., 2500">
+            </div>
+            
+            <div class="form-group">
+                <label for="payment-terms">Payment Terms</label>
+                <select id="payment-terms">
+                    <option value="annual">Annually</option>
+                    <option value="semi-annual">Semi-Annually</option>
+                    <option value="quarterly">Quarterly</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="agreement-length">Subscription Length (Months)</label>
+                <input type="number" id="agreement-length" value="12">
+            </div>
+            
+            <div class="form-group">
+                <label for="first-payment-date">Date of First Payment</label>
+                <input type="date" id="first-payment-date">
+            </div>
+            
+            <div class="simple-checkbox-group">
+                <input type="checkbox" id="is-multi-location">
+                <label for="is-multi-location">Multiple Locations</label>
+            </div>
+            
+            <div id="multi-location-section" class="hidden">
+                <div class="form-group">
+                    <label for="location-count">Number of Locations</label>
+                    <input type="number" id="location-count" value="2" min="2">
+                </div>
+                <div id="location-inputs-container">
+                    </div>
+            </div>
+            
+            <div class="simple-checkbox-group" style="margin-top: 20px;">
+                <input type="checkbox" id="is-promo">
+                <label for="is-promo">Apply Special Offer</label>
+            </div>
+            
+            <div id="promo-section" class="form-group hidden">
+                <label for="promo-total-months">Total Service Months</label>
+                <input type="number" id="promo-total-months" value="13">
+            </div>
+        </div>
+
+        <div class="app-section">
+            <h2>Part 4: Terms of Service & Generation</h2>
+            <div class="form-group">
+                <label>Generated Terms (Preview)</label>
+                <div class="tos-preview" id="tos-preview-box">
+                    <p><i>[Fill in the fields above to see a preview...]</i></p>
+                </div>
+            </div>
+            <button class="generate-button" id="generate-pdf">
+                Generate & Download PDF
+            </button>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.1/jspdf.plugin.autotable.min.js"></script>
+
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+
+            // === 1. GET ALL OUR ELEMENTS ===
+            const allInputs = [
+                document.getElementById('payment-terms'),
+                document.getElementById('agreement-length'),
+                document.getElementById('agreement-value'),
+                document.getElementById('first-payment-date'),
+                document.getElementById('location-name'),
+                document.getElementById('proposal-date'),
+                document.getElementById('client-name'),
+                document.getElementById('client-email'),
+                document.getElementById('client-phone'),
+                document.getElementById('package-type'),
+                document.getElementById('is-promo'),
+                document.getElementById('promo-total-months'),
+                document.getElementById('is-multi-location'),
+                document.getElementById('location-count'),
+                document.getElementById('list-price') 
+            ];
+
+            const paymentTerms = document.getElementById('payment-terms');
+            const agreementLength = document.getElementById('agreement-length');
+            const agreementValue = document.getElementById('agreement-value');
+            const listPrice = document.getElementById('list-price'); 
+            const packageType = document.getElementById('package-type');
+            const firstPaymentDate = document.getElementById('first-payment-date');
+            const tosPreviewBox = document.getElementById('tos-preview-box');
+            const generatePdfButton = document.getElementById('generate-pdf');
+            
+            const locationName = document.getElementById('location-name');
+            const clientName = document.getElementById('client-name');
+            const clientLogoUpload = document.getElementById('client-logo-upload');
+            const isRevised = document.getElementById('is-revised');
+            
+            const isMultiLocation = document.getElementById('is-multi-location');
+            const multiLocationSection = document.getElementById('multi-location-section');
+            const locationCount = document.getElementById('location-count');
+            const locationInputsContainer = document.getElementById('location-inputs-container');
+            
+            const isPromo = document.getElementById('is-promo');
+            const promoSection = document.getElementById('promo-section');
+            const promoTotalMonths = document.getElementById('promo-total-months');
+            
+            let clientLogoData = null;
+            
+            const bevspotLogoImg = document.getElementById('bevspot-logo-img');
+            // MODIFIED: This will now read the Base64 data from the src attribute
+            const bevspotLogoSource = bevspotLogoImg ? bevspotLogoImg.src : null;
+
+
+            // === 2. HELPER FUNCTIONS ===
+            
+            function formatCurrency(num) {
+                const n = parseFloat(num);
+                if (isNaN(n)) return '$0.00';
+                return n.toLocaleString('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 2 });
+            }
+
+            function formatDate(date) {
+                if (!date) return '[Date]';
+                const d = new Date(date + 'T00:00:00-05:00'); 
+                const year = d.getFullYear();
+                const month = String(d.getMonth() + 1).padStart(2, '0');
+                const day = String(d.getDate()).padStart(2, '0');
+                return `${month}/${day}/${year}`;
+            }
+
+            function addMonths(dateStr, months) {
+                if (!dateStr) return null;
+                const d = new Date(dateStr + 'T00:00:00-05:00');
+                d.setMonth(d.getMonth() + months);
+                return formatDate(d.toISOString().split('T')[0]);
+            }
+            
+            function calculateListPrice() {
+                const pkg = packageType.value;
+                let price = 0;
+                
+                if (pkg === 'Beverage Pro' || pkg === 'Food Pro') {
+                    price = 4388;
+                } 
+                else if (pkg === 'Food and Beverage Pro') {
+                    price = 8776;
+                }
+                
+                listPrice.value = price;
+            }
+
+            // === 3. CORE LOGIC: UPDATE TERMS PREVIEW ===
+            function updateTOS() {
+                
+                const terms = paymentTerms.value;
+                const length = agreementLength.value || '12';
+                const price = agreementValue.value || '0'; 
+                const firstDate = firstPaymentDate.value;
+                const formattedFirstDate = formatDate(firstDate);
+                
+                let tosHTML = '';
+
+                tosHTML += `<p>1. BevSpot Inc’s agreement begins upon activation of accounts. BevSpot Inc’s agreement length is for <strong>${length} Months</strong> from the date of activation of accounts.</p>`;
+
+                if (isPromo.checked) {
+                    const totalMonths = promoTotalMonths.value || length;
+                    tosHTML += `<p><strong>SPECIAL OFFER:</strong> Customer will receive <strong>${totalMonths} months</strong> of service for the price of <strong>${length} months</strong>.</p>`;
+                }
+
+                if (terms === 'annual') {
+                    tosHTML += `<p>2. By agreeing to an <strong>Annual</strong> payment structure, I am authorizing BevSpot Inc, to collect payment of <strong>${formatCurrency(price)}</strong> on or before <strong>${formattedFirstDate}</strong>.</p>`;
+                
+                } else if (terms === 'semi-annual') {
+                    const paymentAmount = (price / 2);
+                    const secondPaymentDate = addMonths(firstDate, 6);
+                    
+                    tosHTML += `<p>2. By agreeing to a <strong>Semi-Annual</strong> payment structure, I am authorizing BevSpot Inc, to collect payments as scheduled below:</p>`;
+                    tosHTML += `<ul>
+                                    <li>Payment 1: <strong>${formatCurrency(paymentAmount)}</strong> on or before <strong>${formattedFirstDate}</strong></li>
+                                    <li>Payment 2: <strong>${formatCurrency(paymentAmount)}</strong> on or before <strong>${secondPaymentDate}</strong></li>
+                                </ul>`;
+                    tosHTML += `<p><strong>Signature:</strong> _________________________</p>`;
+
+                } else if (terms === 'quarterly') {
+                    const paymentAmount = (price / 4);
+                    const secondPaymentDate = addMonths(firstDate, 3);
+                    const thirdPaymentDate = addMonths(firstDate, 6);
+                    const fourthPaymentDate = addMonths(firstDate, 9);
+
+                    tosHTML += `<p>2. By agreeing to a <strong>Quarterly</strong> payment structure, I am authorizing BevSpot Inc, to collect payments as scheduled below:</p>`;
+                    tosHTML += `<ul>
+                                    <li>Payment 1: <strong>${formatCurrency(paymentAmount)}</strong> on or before <strong>${formattedFirstDate}</strong></li>
+                                    <li>Payment 2: <strong>${formatCurrency(paymentAmount)}</strong> on or before <strong>${secondPaymentDate}</strong></li>
+                                    <li>Payment 3: <strong>${formatCurrency(paymentAmount)}</strong> on or before <strong>${thirdPaymentDate}</strong></li>
+                                    <li>Payment 4: <strong>${formatCurrency(paymentAmount)}</strong> on or before <strong>${fourthPaymentDate}</strong></li>
+                                </ul>`;
+                    tosHTML += `<p><strong>Signature:</strong> _________________________</p>`;
+                }
+                
+                tosHTML += `<p>3. I have read and accepted <a href="https://bevspot.com/terms-conditions/" target="_blank">BevSpot’s terms and conditions</a>. Customer hereby accepts the terms and conditions outlined here and orders from BevSpot the Services described in this Order Form.</p>`;
+                
+                tosPreviewBox.innerHTML = tosHTML;
+            }
+            
+            function generateLocationInputs() {
+                const count = parseInt(locationCount.value) || 0;
+                locationInputsContainer.innerHTML = '';
+                
+                for (let i = 0; i < count; i++) {
+                    const formGroup = document.createElement('div');
+                    formGroup.className = 'form-group';
+                    
+                    const label = document.createElement('label');
+                    label.textContent = `Location ${i + 1} Name`;
+                    
+                    const input = document.createElement('input');
+                    input.type = 'text';
+                    input.className = 'location-name-input';
+                    input.placeholder = 'Enter location name';
+                    
+                    formGroup.appendChild(label);
+                    formGroup.appendChild(input);
+                    locationInputsContainer.appendChild(formGroup);
+                }
+            }
+
+            // === 4. EVENT LISTENERS ===
+            
+            packageType.addEventListener('change', calculateListPrice);
+
+            allInputs.forEach(input => {
+                const eventType = (input.type === 'checkbox' || input.tagName === 'SELECT') ? 'change' : 'input';
+                input.addEventListener(eventType, updateTOS);
+            });
+            
+            clientLogoUpload.addEventListener('change', (event) => {
+                const file = event.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = (e) => {
+                        clientLogoData = e.target.result;
+                        document.querySelector('.logo-upload strong').textContent = file.name;
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('proposal-date').value = today;
+            
+            isMultiLocation.addEventListener('change', () => {
+                multiLocationSection.classList.toggle('hidden', !isMultiLocation.checked);
+                if (isMultiLocation.checked) {
+                    generateLocationInputs();
+                }
+            });
+            
+            locationCount.addEventListener('input', generateLocationInputs);
+            
+            isPromo.addEventListener('change', () => {
+                promoSection.classList.toggle('hidden', !isPromo.checked);
+            });
+
+            // === 5. PDF GENERATION ===
+            generatePdfButton.addEventListener('click', () => {
+                
+                const { jsPDF } = window.jspdf;
+                const doc = new jsPDF('p', 'pt', 'a4');
+                const margin = 40;
+                const pageWidth = doc.internal.pageSize.getWidth();
+                const contentWidth = pageWidth - (margin * 2);
+                const bevSpotOrange = [242, 107, 58];
+                const lightGray = [248, 249, 250];
+                let y = margin;
+
+                // --- 1. Add Logos ---
+                if (bevspotLogoSource && bevspotLogoSource.startsWith('data:image')) {
+                    try {
+                        doc.addImage(bevspotLogoImg, 'PNG', (pageWidth - margin - 150), margin, 150, 48);
+                    } catch (e) {
+                        console.error("Error adding BevSpot logo to PDF:", e);
+                    }
+                }
+                
+                if (clientLogoData) {
+                    doc.addImage(clientLogoData, 'PNG', margin, margin, 150, 48);
+                }
+                
+                y += 70;
+
+                // --- 2. Header Info ---
+                doc.setFontSize(22);
+                doc.setFont('helvetica', 'bold');
+                doc.text('BevSpot Proposal', margin, y);
+                y += 30;
+
+                doc.setFontSize(12);
+                doc.setFont('helvetica', 'normal');
+                doc.text(`Date: ${formatDate(document.getElementById('proposal-date').value)}`, margin, y);
+                y += 20;
+                doc.text(`Location: ${locationName.value || '[Location Name]'}`, margin, y);
+                y += 20;
+                doc.text(`Prepared for: ${clientName.value || '[Client Name]'}`, margin, y);
+                y += 40;
+
+                // --- 3. Agreement Details ---
+                
+                doc.setFillColor(bevSpotOrange[0], bevSpotOrange[1], bevSpotOrange[2]);
+                doc.roundedRect(margin, y, contentWidth, 30, 5, 5, 'F'); 
+                doc.setFontSize(16);
+                doc.setFont('helvetica', 'bold');
+                doc.setTextColor(255, 255, 255);
+                doc.text('Agreement Details', margin + 10, y + 20); 
+                
+                doc.setTextColor(0, 0, 0); 
+                y += 30 + 15; 
+                
+                doc.setFontSize(12);
+                doc.setFont('helvetica', 'normal');
+                
+                const details = [
+                    ['Package:', document.getElementById('package-type').value],
+                    ['List Price:', formatCurrency(listPrice.value)],
+                    ['Your Price:', formatCurrency(agreementValue.value)], 
+                    ['Subscription Length:', `${agreementLength.value} Months`],
+                    ['Payment Terms:', document.getElementById('payment-terms').options[document.getElementById('payment-terms').selectedIndex].text]
+                ];
+                
+                if (isPromo.checked) {
+                    details.push(['Special Offer:', `Get ${promoTotalMonths.value} months for the price of ${agreementLength.value}`]);
+                }
+
+                details.forEach(detail => {
+                    doc.setFont('helvetica', 'bold');
+                    doc.text(detail[0], margin, y);
+                    doc.setFont('helvetica', 'normal');
+                    doc.text(detail[1], margin + 140, y);
+                    y += 20;
+                });
+                
+                // Add Locations Table
+                if (isMultiLocation.checked) {
+                    y += 10;
+                    
+                    const locationInputs = document.querySelectorAll('.location-name-input');
+                    const locationsData = [];
+                    locationInputs.forEach(input => {
+                        locationsData.push([input.value || 'N/A']);
+                    });
+
+                    doc.autoTable({
+                        startY: y,
+                        head: [['Included Locations']],
+                        body: locationsData,
+                        theme: 'grid',
+                        headStyles: {
+                            fillColor: bevSpotOrange,
+                            textColor: [255, 255, 255]
+                        },
+                        didDrawPage: (data) => {
+                            y = data.cursor.y; 
+                        }
+                    });
+                    
+                    y += 20;
+                } else {
+                     y += 20;
+                }
+
+                // --- 4. Terms of Service ---
+                doc.setFontSize(16);
+                doc.setFont('helvetica', 'bold');
+                doc.text('Terms of Service', pageWidth / 2, y, { align: 'center' });
+                y += 25;
+
+                const tosNode = document.getElementById('tos-preview-box');
+                
+                // *** MODIFICATION START ***
+                // Get link element and its position relative to the preview box
+                const linkElement = tosNode.querySelector('a[href="https://bevspot.com/terms-conditions/"]');
+                let linkRect = null;
+                let tosRect = null;
+                if (linkElement) {
+                    linkRect = linkElement.getBoundingClientRect();
+                    tosRect = tosNode.getBoundingClientRect();
+                }
+                // *** MODIFICATION END ***
+                
+                html2canvas(tosNode, { scale: 2, backgroundColor: '#ffffff' }).then(canvas => {
+                    const imgData = canvas.toDataURL('image/png');
+                    const imgProps = doc.getImageProperties(imgData);
+                    const imgHeight = (imgProps.height * contentWidth) / imgProps.width;
+                    
+                    // *** MODIFICATION START ***
+                    // Store the Y position *before* adding the image
+                    const imageStartY = y;
+                    // Get the CSS width of the element that was screenshotted
+                    const cssWidth = tosNode.offsetWidth;
+                    // *** MODIFICATION END ***
+
+                    doc.addImage(imgData, 'PNG', margin, imageStartY, contentWidth, imgHeight); // Use imageStartY
+
+                    // *** MODIFICATION START ***
+                    // Create an invisible link hotspot over the image
+                    if (linkRect && tosRect && cssWidth > 0) {
+                        // Calculate scale factor: PDF points per CSS pixel
+                        const scaleFactor = contentWidth / cssWidth;
+                        
+                        // Calculate relative CSS pixel coordinates of the link
+                        const relativeX = linkRect.left - tosRect.left;
+                        const relativeY = linkRect.top - tosRect.top;
+                        
+                        // Convert to PDF point coordinates
+                        const pdfLinkX = (relativeX * scaleFactor) + margin;
+                        const pdfLinkY = (relativeY * scaleFactor) + imageStartY;
+                        const pdfLinkW = linkRect.width * scaleFactor;
+                        const pdfLinkH = linkRect.height * scaleFactor;
+
+                        // Add the invisible link annotation
+                        doc.link(pdfLinkX, pdfLinkY, pdfLinkW, pdfLinkH, { 
+                            url: 'https://bevspot.com/terms-conditions/' 
+                        });
+                    }
+                    // *** MODIFICATION END ***
+                    
+                    y += imgHeight + 20;
+                    
+                    // --- 5. Final Acceptance ---
+                    
+                    const acceptanceBoxY = y;
+                    const acceptanceBoxHeight = 120;
+                    
+                    doc.setFillColor(lightGray[0], lightGray[1], lightGray[2]);
+                    doc.roundedRect(margin, acceptanceBoxY, contentWidth, acceptanceBoxHeight, 5, 5, 'F');
+                    
+                    let acceptanceY = acceptanceBoxY + 15; 
+                    const acceptanceMargin = margin + 10; 
+                    
+                    doc.setFontSize(12);
+                    doc.setFont('helvetica', 'normal');
+                    doc.setTextColor(0, 0, 0);
+                    
+                    doc.text('Customer hereby accepts the terms and conditions outlined here and orders from', acceptanceMargin, acceptanceY);
+                    acceptanceY += 15;
+                    doc.text('BevSpot the Services described in this Order Form.', acceptanceMargin, acceptanceY);
+                    acceptanceY += 40;
+                    
+                    doc.text('Customer Signature:', acceptanceMargin, acceptanceY);
+                    doc.line(acceptanceMargin + 110, acceptanceY, acceptanceMargin + 310, acceptanceY);
+                    acceptanceY += 20;
+                    
+                    doc.text('Printed Name:', acceptanceMargin, acceptanceY);
+                    doc.line(acceptanceMargin + 110, acceptanceY, acceptanceMargin + 310, acceptanceY);
+                    acceptanceY += 20;
+                    
+                    doc.text('Date:', acceptanceMargin, acceptanceY);
+                    doc.line(acceptanceMargin + 110, acceptanceY, acceptanceMargin + 310, acceptanceY);
+
+                    // --- 6. Save the PDF ---
+                    const revision = isRevised.checked ? '-(Revised)' : '';
+                    const fileName = `${locationName.value || 'BevSpot'}-Proposal${revision}.pdf`;
+                    doc.save(fileName);
+                });
+            });
+
+            // Run once on load
+            calculateListPrice(); 
+            updateTOS(); 
+            
+            document.getElementById('proposal-date').value = today;
+            
+            generateLocationInputs();
+        });
+    </script>
+</body>
+</html>
